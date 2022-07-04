@@ -119,6 +119,21 @@ func webhookSlack(rs string, status string, reason string, message string) {
 		Footer:        "slack api",
 		FooterIcon:    "https://platform.slack-edge.com/img/default_application_icon.png",
 		Ts:            json.Number(strconv.FormatInt(time.Now().Unix(), 10)),
+		Actions: []slack.AttachmentAction{
+			slack.AttachmentAction{
+				Name:  "accept",
+				Text:  "Accept",
+				Type:  "button",
+				Value: "accept",
+			},
+			slack.AttachmentAction{
+				Name:  "reject",
+				Text:  "Reject",
+				Type:  "button",
+				Value: "reject",
+				Style: "danger",
+			},
+		},
 	}
 	msg := slack.WebhookMessage{
 		Attachments: []slack.Attachment{attachment},

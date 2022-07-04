@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -24,9 +25,10 @@ func main() {
 	// webhookSlack()
 
 	var kubeconfig *string
+	usr, _ := os.UserHomeDir()
 
 	// kubeconfig flag
-	kubeconfig = flag.String("kubeconfig", filepath.Join("/Users/stazdx", ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+	kubeconfig = flag.String("kubeconfig", filepath.Join(usr, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 
 	flag.Parse()
 
@@ -68,7 +70,7 @@ func main() {
 	}
 
 	// list all pods in default namespace with label selector
-	custom_pod, _ := clientset.CoreV1().Pods(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{LabelSelector: "app=test"})
+	custom_pod, _ := clientset.CoreV1().Pods(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{LabelSelector: "app=demo"})
 	fmt.Println("\n--------- CUSTOM POD ---------\n\n", custom_pod.Items)
 
 	PodName := ""
@@ -107,7 +109,7 @@ func main() {
 
 func webhookSlack(rs string, status string, reason string, message string) {
 	attachment := slack.Attachment{
-		Color:         "#FF0000",
+		Color:         "#3AA3E3",
 		Fallback:      "Kubernetes cluster has changes!",
 		AuthorName:    "Staz Dx",
 		AuthorSubname: "github.com",
@@ -122,7 +124,7 @@ func webhookSlack(rs string, status string, reason string, message string) {
 		Attachments: []slack.Attachment{attachment},
 	}
 
-	err := slack.PostWebhook("SLACK_WEBHOOK_URL", &msg)
+	err := slack.PostWebhook("https://hooks.slack.com/services/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", &msg)
 	if err != nil {
 		fmt.Println(err)
 	}

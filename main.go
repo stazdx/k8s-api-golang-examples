@@ -22,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	configLoadingRules := &clientcmd.ClientConfigLoadingRules{ExplicitPath: *kubeconfig}
-	configOverrides := &clientcmd.ConfigOverrides{CurrentContext: "eks_saleor-backendv2-qa"}
+	configOverrides := &clientcmd.ConfigOverrides{CurrentContext: "microk8s"}
 
 	kconf, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(configLoadingRules, configOverrides).ClientConfig()
 	if err != nil {
@@ -31,18 +31,33 @@ func main() {
 
 	ctx := context.Background()
 
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	// config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// clientset, err := kubernetes.NewForConfig(config)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	clientset2, err := kubernetes.NewForConfig(kconf)
 	if err != nil {
 		panic(err)
 	}
 
-	clientset, err := kubernetes.NewForConfig(config)
+	list2, err := clientset2.AppsV1().Deployments(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{})
 	if err != nil {
 		panic(err)
 	}
 
-	list, err := clientset.AppsV1().Deployments(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{})
+	fmt.Println(list2.Items)
 
-	fmt.Println(kconf, list)
+	// list, err := clientset.AppsV1().Deployments(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{})
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// fmt.Println(list.Items)
 
 }

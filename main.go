@@ -75,8 +75,22 @@ func main() {
 
 	if custom_pod.Items != nil {
 		for _, pod := range custom_pod.Items {
+			// if the Pod doesn't have ready status
+			if pod.Status.ContainerStatuses[0].Ready != true {
+				// if the status is waiting or else (terminating)
+				if pod.Status.ContainerStatuses[0].State.Waiting != nil {
+					// send Slack notification with error
+					webhookSlack(pod.Name, "Waiting", pod.Status.ContainerStatuses[0].State.Waiting.Reason,
+						pod.Status.ContainerStatuses[0].State.Waiting.Message)
+				} else {
+					// send Slack notification with error
+					webhookSlack(pod.Name, "Terminated", pod.Status.ContainerStatuses[0].State.Terminated.Reason,
+						pod.Status.ContainerStatuses[0].State.Terminated.Message)
+				}
+			}
 			PodName = pod.Name
-			fmt.Println(pod.Name, " -> Ready:", pod.Status.ContainerStatuses[0].Ready, pod.Status.ContainerStatuses[0].State.Running)
+			fmt.Println(pod.Name, " -> Ready:", pod.Status.ContainerStatuses[0].Ready,
+				pod.Status.ContainerStatuses[0].State.Running)
 		}
 	}
 
@@ -91,15 +105,15 @@ func main() {
 
 }
 
-func webhookSlack() {
+func webhookSlack(rs string, status string, reason string, message string) {
 	attachment := slack.Attachment{
-		Color:         "good",
-		Fallback:      "You successfully posted by Incoming Webhook URL!",
+		Color:         "#FF0000",
+		Fallback:      "Kubernetes cluster has changes!",
 		AuthorName:    "Staz Dx",
 		AuthorSubname: "github.com",
 		AuthorLink:    "https://github.com/stazdx",
 		AuthorIcon:    "https://avatars2.githubusercontent.com/u/1691541",
-		Text:          "<!channel> All text in Slack uses the same system of escaping: chat messages, direct messages, file comments, etc. :smile:\nSee <https://api.slack.com/docs/message-formatting#linking_to_channels_and_users>",
+		Text:          "<!channel> Resource Details:\n :notebook: name: `" + rs + "` \n :eyes: Status: `" + status + "` \n :bangbang: Reason: `" + reason + "` \n :warning: Message: `" + message + "`",
 		Footer:        "slack api",
 		FooterIcon:    "https://platform.slack-edge.com/img/default_application_icon.png",
 		Ts:            json.Number(strconv.FormatInt(time.Now().Unix(), 10)),

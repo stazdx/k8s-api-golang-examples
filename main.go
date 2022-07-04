@@ -55,7 +55,11 @@ func main() {
 	}
 
 	// print results - Deployments
-	fmt.Println(deployments.Items[0])
+	fmt.Println("\n--------- DEPLOYMENTS --------- \n\n", deployments.Items[0])
+
+	// list all pods in default namespace
+	pods, _ := clientset.CoreV1().Pods(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{})
+	fmt.Println("\n--------- PODS ---------\n\n", pods.Items)
 
 	// get custom pod in default namespace - Name: test-5f6778868d-grcn7
 	pod, err := clientset.CoreV1().Pods(apiv1.NamespaceDefault).Get(ctx, "test-5f6778868d-grcn7", metav1.GetOptions{})
@@ -64,7 +68,7 @@ func main() {
 	}
 
 	// print pod status
-	fmt.Println(pod.Status)
+	fmt.Println("\n--------- POD STATUS --------- \n\n", pod.Status)
 
 	// list, err := clientset.AppsV1().Deployments(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{})
 	// if err != nil {

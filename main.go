@@ -31,10 +31,15 @@ func main() {
 
 	ctx := context.Background()
 
-	fmt.Println(ctx)
-
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	if err != nil {
+		panic(err)
+	}
+
 	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err)
+	}
 
 	list, err := clientset.AppsV1().Deployments(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{})
 

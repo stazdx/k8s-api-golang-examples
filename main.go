@@ -20,14 +20,19 @@ import (
 func main() {
 	fmt.Println("--Testing--")
 
-	webhookSlack()
+	// send slack notification
+	// webhookSlack()
 
 	var kubeconfig *string
+
+	// kubeconfig flag
 	kubeconfig = flag.String("kubeconfig", filepath.Join("/Users/stazdx", ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 
 	flag.Parse()
 
 	configLoadingRules := &clientcmd.ClientConfigLoadingRules{ExplicitPath: *kubeconfig}
+
+	// setting custom context
 	configOverrides := &clientcmd.ConfigOverrides{CurrentContext: "microk8s"}
 
 	kconf, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(configLoadingRules, configOverrides).ClientConfig()
@@ -37,27 +42,29 @@ func main() {
 
 	ctx := context.Background()
 
-	// config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// clientset, err := kubernetes.NewForConfig(config)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	clientset2, err := kubernetes.NewForConfig(kconf)
+	// new k8s connection
+	clientset, err := kubernetes.NewForConfig(kconf)
 	if err != nil {
 		panic(err)
 	}
 
-	list2, err := clientset2.AppsV1().Deployments(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{})
+	// get deployments in default namespace
+	deployments, err := clientset.AppsV1().Deployments(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{})
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(list2.Items[0])
+	// print results - Deployments
+	fmt.Println(deployments.Items[0])
+
+	// get custom pod in default namespace - Name: test-5f6778868d-grcn7
+	pod, err := clientset.CoreV1().Pods(apiv1.NamespaceDefault).Get(ctx, "test-5f6778868d-grcn7", metav1.GetOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	// print pod status
+	fmt.Println(pod.Status)
 
 	// list, err := clientset.AppsV1().Deployments(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{})
 	// if err != nil {

@@ -57,9 +57,15 @@ func main() {
 	// print results - Deployments
 	fmt.Println("\n--------- DEPLOYMENTS --------- \n\n", deployments.Items[0])
 
-	// list all pods in default namespace
-	pods, _ := clientset.CoreV1().Pods(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{})
-	fmt.Println("\n--------- PODS ---------\n\n", pods.Items)
+	// list all pods in default namespace with selector
+	custom_pod, _ := clientset.CoreV1().Pods(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{FieldSelector: "metadata.name=test"})
+	fmt.Println("\n--------- CUSTOM POD ---------\n\n", custom_pod.Items)
+
+	if custom_pod.Items != nil {
+		for _, pod := range custom_pod.Items {
+			fmt.Println(pod.Name, " -> ", pod.Status)
+		}
+	}
 
 	// get custom pod in default namespace - Name: test-5f6778868d-grcn7
 	pod, err := clientset.CoreV1().Pods(apiv1.NamespaceDefault).Get(ctx, "test-5f6778868d-grcn7", metav1.GetOptions{})

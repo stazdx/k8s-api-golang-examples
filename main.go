@@ -85,7 +85,7 @@ func webhookSlack() {
 		Attachments: []slack.Attachment{attachment},
 	}
 
-	err := slack.PostWebhook("https://hooks.slack.com/services/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", &msg)
+	err := slack.PostWebhook("SLACK_WEBHOOK_URL", &msg)
 	if err != nil {
 		fmt.Println(err)
 	}

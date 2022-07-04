@@ -70,13 +70,6 @@ func main() {
 	// print pod status
 	fmt.Println("\n--------- POD STATUS --------- \n\n", pod.Status)
 
-	// list, err := clientset.AppsV1().Deployments(apiv1.NamespaceDefault).List(ctx, metav1.ListOptions{})
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// fmt.Println(list.Items)
-
 }
 
 func webhookSlack() {

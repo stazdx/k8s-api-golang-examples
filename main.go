@@ -104,7 +104,7 @@ func main() {
 
 func webhookSlack(rs string, status string, reason string, message string) {
 
-	token := "xoxb-1174919762118-3780910931680-rEc5JiTHgp4YZwDQElORG9X2"
+	token := "SLACK_BOT_TOKEN"
 
 	api := slack.New(token)
 

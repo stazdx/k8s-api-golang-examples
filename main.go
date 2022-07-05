@@ -19,11 +19,6 @@ import (
 )
 
 func main() {
-	fmt.Println("--Testing--")
-
-	// send slack notification
-	// webhookSlack()
-
 	var kubeconfig *string
 	usr, _ := os.UserHomeDir()
 
@@ -108,6 +103,13 @@ func main() {
 }
 
 func webhookSlack(rs string, status string, reason string, message string) {
+
+	token := "xoxb-1174919762118-3780910931680-rEc5JiTHgp4YZwDQElORG9X2"
+
+	api := slack.New(token)
+
+	channel := "k8s-api"
+
 	attachment := slack.Attachment{
 		Color:         "#3AA3E3",
 		Fallback:      "Kubernetes cluster has changes!",
@@ -125,6 +127,7 @@ func webhookSlack(rs string, status string, reason string, message string) {
 				Text:  "Accept",
 				Type:  "button",
 				Value: "accept",
+				URL:   "http://localhost:3000/actions",
 			},
 			slack.AttachmentAction{
 				Name:  "reject",
@@ -135,12 +138,21 @@ func webhookSlack(rs string, status string, reason string, message string) {
 			},
 		},
 	}
-	msg := slack.WebhookMessage{
-		Attachments: []slack.Attachment{attachment},
+
+	// msg := slack.WebhookMessage{
+	// 	Attachments: []slack.Attachment{attachment},
+	// }
+
+	// err := slack.PostWebhook("SLACK_WEBHOOK_URL", &msg)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+
+	msg := slack.MsgOptionAttachments(attachment)
+
+	_, _, err := api.PostMessage(channel, slack.MsgOptionText("", false), msg)
+	if err != nil {
+		fmt.Printf("Could not send message: %v", err)
 	}
 
-	err := slack.PostWebhook("https://hooks.slack.com/services/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", &msg)
-	if err != nil {
-		fmt.Println(err)
-	}
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -127,8 +128,9 @@ func (c *Controller) runWorker() {
 
 func main() {
 	var kubeconfig *string
+	usr, _ := os.UserHomeDir()
 
-	kubeconfig = flag.String("kubeconfig", filepath.Join("/Users/stazdx", ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+	kubeconfig = flag.String("kubeconfig", filepath.Join(usr, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 
 	flag.Parse()
 

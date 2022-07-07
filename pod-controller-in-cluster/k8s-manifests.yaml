@@ -1,0 +1,35 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-controller
+  labels:
+    app: pod-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pod-controller
+  template:
+    metadata:
+      labels:
+        app: pod-controller
+    spec:
+      containers:
+      - name: pod-controller
+        image: DOCKER_IMAGE
+        ports:
+        - containerPort: 8080
+# ---
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: pod-controller-svc
+# spec:
+#   selector:
+#     app: pod-controller
+#   ports:
+#     - protocol: TCP
+#       port: 80
+#       targetPort: 8080

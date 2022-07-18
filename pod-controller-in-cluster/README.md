@@ -6,5 +6,4 @@ $ ./run.sh my_image
 ```
 
 TODO: 
-
 Pod watcher
